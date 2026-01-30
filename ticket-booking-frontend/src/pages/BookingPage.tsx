@@ -149,13 +149,15 @@ export default function BookingPage() {
             </div>
           ) : (
             <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3 justify-items-center max-w-2xl mx-auto">
+              
               {seats.map((seat) => (
                 <Seat 
                   key={seat.id}
                   id={seat.id}
                   seatNumber={seat.seatNumber}
+                  selected={selectedSeatIds.includes(seat.id)} 
                   status={selectedSeatIds.includes(seat.id) ? 'SELECTED' : seat.status}
-                  onToggle={() => toggleSeat(seat.id)}
+                  onClick={() => toggleSeat(seat.id)}
                 />
               ))}
             </div>

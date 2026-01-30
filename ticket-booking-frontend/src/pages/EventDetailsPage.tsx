@@ -188,7 +188,7 @@ export default function EventDetailsPage() {
               <div className="prose prose-invert prose-lg text-slate-400 leading-relaxed">
                  {/* Fallback description if DB is empty */}
                  <p>
-                   {event.description || 
+                   { 
                    `Get ready for an unforgettable experience at ${event.venue?.name}! 
                    This event promises high-energy performances, immersive visuals, 
                    and a night you won't want to miss. Secure your spot now to witness ${event.name} live.`}

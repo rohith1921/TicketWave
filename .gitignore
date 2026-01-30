@@ -38,3 +38,10 @@ application-local.properties
 ../.env
 node_modules
 target
+
+
+.env
+.idea/
+node_modules/
+dist/
+target/

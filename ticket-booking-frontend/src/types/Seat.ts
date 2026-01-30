@@ -1,7 +1,4 @@
-export type SeatStatus =
-  | "AVAILABLE"
-  | "BOOKED"
-  | "LOCKED";
+export type SeatStatus = "AVAILABLE" | "SOLD" | "SELECTED" | "BOOKED";
 
 export interface Seat {
   id: number;

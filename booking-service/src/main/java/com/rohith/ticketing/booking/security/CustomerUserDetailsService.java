@@ -18,8 +18,10 @@ public class CustomerUserDetailsService {
         throws UsernameNotFoundException {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                    new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> {
+//                    System.out.println("❌ FAILURE: Could not find [" + email + "] in the list above.");
+                    return new UsernameNotFoundException("User not found");
+                });
 
         return new CustomerDetails(
                 user.getId(),

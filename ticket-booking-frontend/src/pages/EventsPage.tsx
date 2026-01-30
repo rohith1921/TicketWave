@@ -158,7 +158,7 @@ export default function EventsPage() {
                       transition={{ delay: 0.5 }}
                       className="text-slate-300 line-clamp-2 max-w-xl text-lg md:text-xl font-medium"
                     >
-                      {heroEvents[currentSlide].description || `Experience the biggest event of the year at ${heroEvents[currentSlide].venue?.name}. Don't miss out!`}
+                      {`Experience the biggest event of the year at ${heroEvents[currentSlide].venue?.name}. Don't miss out!`}
                     </motion.p>
                     
                     <motion.div 

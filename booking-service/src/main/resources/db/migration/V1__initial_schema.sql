@@ -3,13 +3,13 @@ CREATE TABLE users (
                        email           VARCHAR(255) NOT NULL UNIQUE,
                        password_hash   VARCHAR(255) NOT NULL,
                        role            VARCHAR(20)  NOT NULL,
-                       created_at      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+                       created_at      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                       name            VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE venues (
                         id          BIGSERIAL PRIMARY KEY,
-                        name        VARCHAR(255) NOT NULL,
-                        city        VARCHAR(100) NOT NULL
+                        name        VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE events (
@@ -26,7 +26,8 @@ CREATE TABLE events (
 CREATE TABLE seats (
                        id          BIGSERIAL PRIMARY KEY,
                        venue_id    BIGINT NOT NULL,
-                       seat_number VARCHAR(10) NOT NULL,
+                       seat_number INTEGER NOT NULL,
+                       price       NUMERIC(10,2) NOT NULL,
 
                        CONSTRAINT fk_seat_venue
                            FOREIGN KEY (venue_id) REFERENCES venues(id),
@@ -42,6 +43,7 @@ CREATE TABLE bookings (
                           expires_at      TIMESTAMP NOT NULL,
                           version         INTEGER NOT NULL,
                           created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
                           CONSTRAINT fk_booking_user
                               FOREIGN KEY (user_id) REFERENCES users(id),
@@ -70,6 +72,7 @@ CREATE TABLE payments (
                           status              VARCHAR(20) NOT NULL,
                           idempotency_key     VARCHAR(100) NOT NULL,
                           created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          reference_id VARCHAR(255) NOT NULL,
 
                           CONSTRAINT fk_payment_booking
                               FOREIGN KEY (booking_id) REFERENCES bookings(id),

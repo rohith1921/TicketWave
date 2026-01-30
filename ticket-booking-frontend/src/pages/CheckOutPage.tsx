@@ -63,7 +63,7 @@ export default function CheckoutPage() {
 
       // Step 2: Configure Razorpay Options
       const options = {
-        key: "import.meta.env.VITE_RAZORPAY_KEY_ID", // 🔴 REPLACE WITH YOUR TEST KEY ID (rzp_test_...)
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // 🔴 REPLACE WITH YOUR TEST KEY ID (rzp_test_...)
         amount: data.orderId ? finalTotal * 100 : 0, // Amount in paise
         currency: "INR",
         name: "TicketWave",

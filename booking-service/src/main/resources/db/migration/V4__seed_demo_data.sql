@@ -30,11 +30,12 @@ INSERT INTO venues (id, name, city, capacity) VALUES
 -- This generates 50 seats for EACH venue (101-105)
 -- It calculates a unique ID (101, 102... 350) for every row.
 
-INSERT INTO seats (id, venue_id, seat_number)
+INSERT INTO seats (id, venue_id, seat_number, price)
 SELECT
     ROW_NUMBER() OVER (ORDER BY v.id, s.n) + 100, -- Generates IDs: 101, 102, 103...
     v.id,                                         -- Venue ID: 101, 102...
-    s.n                                           -- Seat Number: 1, 2... 50
+    s.n,
+    1000.00
 FROM venues v
          CROSS JOIN generate_series(1, 60) as s(n)
     ON CONFLICT (id) DO NOTHING;
@@ -42,8 +43,8 @@ FROM venues v
 -- ==========================================
 -- STEP 3: CREATE USER
 -- ==========================================
-INSERT INTO users (id, email, password_hash, role, created_at, version)
-VALUES (1, 'demo@example.com', '$2a$10$D8bZ.2.9.8.7.6.5.4.3.2.1', 'ROLE_USER', NOW(), 0)
+INSERT INTO users (id, name, email, password_hash, role, created_at, version)
+VALUES (1, 'Demo User','demo@example.com', '$2a$10$D8bZ.2.9.8.7.6.5.4.3.2.1', 'ROLE_USER', NOW(), 0)
     ON CONFLICT (id) DO NOTHING;
 
 -- ==========================================
@@ -94,3 +95,8 @@ SELECT
     generate_series + 100
 FROM generate_series(1, 200)
     ON CONFLICT DO NOTHING;
+
+
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+
+SELECT setval('bookings_id_seq', (SELECT MAX(id) FROM bookings));

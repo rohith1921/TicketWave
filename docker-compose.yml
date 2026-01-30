@@ -1,11 +1,13 @@
 version: "3.9"
 
 services:
+  # ==========================================
+  # 1. INFRASTRUCTURE (Database & Tools)
+  # ==========================================
   postgres:
     image: postgres:15
     container_name: postgres
     environment:
-      # Correctly mapping .env variables to Container variables
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -13,12 +15,16 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ticketwave-network
 
   redis:
     image: redis:7
     container_name: redis
     ports:
       - "6379:6379"
+    networks:
+      - ticketwave-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -26,6 +32,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - ticketwave-network
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -37,15 +45,21 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      # Dual Listeners: INTERNAL for Docker containers, EXTERNAL for localhost
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - ticketwave-network
 
-  booking-service:
-    build: .
-    container_name: booking-service
+  # ==========================================
+  # 2. BACKEND (Java Spring Boot)
+  # ==========================================
+  backend:
+    build:
+      context: ./booking-service  # 👈 LOOK HERE: We point to the backend folder
+      dockerfile: Dockerfile
+    container_name: ticketwave-backend
     depends_on:
       - postgres
       - redis
@@ -53,21 +67,38 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Pass DB Details
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-
-      # Pass JWT Config
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION: ${JWT_EXPIRATION}
-
-      # Pass Razorpay Config (Use these names in your Spring Boot @Value)
       RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
       RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
-
-      # Ensure Backend uses the internal Kafka listener
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    networks:
+      - ticketwave-network
+
+  # ==========================================
+  # 3. FRONTEND (React + Nginx)
+  # ==========================================
+  frontend:
+    build:
+      context: ./ticket-booking-frontend # 👈 LOOK HERE: We point to the frontend folder
+      dockerfile: Dockerfile
+      args:
+        VITE_RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
+        VITE_API_BASE_URL: "http://192.168.1.34:8080/api"
+    container_name: ticketwave-frontend
+    ports:
+      - "5173:80" # Maps localhost:5173 -> Container Port 80 (Nginx)
+    depends_on:
+      - backend
+    networks:
+      - ticketwave-network
 
 volumes:
   postgres_data:
+
+networks:
+  ticketwave-network:
+    driver: bridge

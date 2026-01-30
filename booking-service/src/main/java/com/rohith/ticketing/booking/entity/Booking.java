@@ -54,4 +54,21 @@ public class Booking {
                 .map(Seat::getPrice) // Assumes Seat has a getPrice() method
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+        // 👇 ADD THIS LINE:
+        if (this.updatedAt == null) {
+            this.updatedAt = LocalDateTime.now();
+        }
+    }
+
+    // Optional: Keep this to update the timestamp when you modify the booking later
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
