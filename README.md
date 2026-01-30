@@ -62,6 +62,22 @@ graph TD
 
 ---
 
+## 📸 UI Showcase
+
+| Landing Page | User Dashboard |
+| :---: | :---: |
+| <img src="screenshots/home.png" alt="Landing Page" width="400"/> | <img src="screenshots/dashboard_page.png" alt="User Dashboard" width="400"/> |
+
+| Event Details | Seat Selection |
+| :---: | :---: |
+| <img src="screenshots/eventpage.png" alt="Event Details" width="400"/> | <img src="screenshots/seats_page.png" alt="Seat Map" width="400"/> |
+
+| Booking Summary | Payment Gateway |
+| :---: | :---: |
+| <img src="screenshots/checkout_page.png" alt="Booking Summary" width="400"/> | <img src="screenshots/payment_page.png" alt="Razorpay Payment" width="400"/> |
+
+---
+
 ## 🛠️ Technology Stack
 
 | Category | Technology | Usage |
